@@ -38,12 +38,14 @@ class TheatreHallSerializer(serializers.ModelSerializer):
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
-    play = PlaySerializer()
-    theatre_hall = TheatreHallSerializer()
-
     class Meta:
         model = Performance
         fields = "__all__"
+
+
+class PerformanceDetailSerializer(PerformanceSerializer):
+    play = PlaySerializer()
+    theatre_hall = TheatreHallSerializer()
 
 
 class TicketSerializer(serializers.ModelSerializer):
