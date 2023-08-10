@@ -15,12 +15,14 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class PlaySerializer(serializers.ModelSerializer):
-    genres = GenreSerializer(many=True)
-    actors = ActorSerializer(many=True)
-
     class Meta:
         model = Play
         fields = "__all__"
+
+
+class PlayDetailSerializer(PlaySerializer):
+    genres = GenreSerializer(many=True)
+    actors = ActorSerializer(many=True)
 
 
 class ReservationSerializer(serializers.ModelSerializer):
