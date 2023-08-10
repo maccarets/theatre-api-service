@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets
 
-from theatre.models import Actor, Genre, Play, Performance
+from theatre.models import Actor, Genre, Play, Performance, TheatreHall
 from theatre.serializers import (
     ActorSerializer,
     GenreSerializer,
@@ -9,6 +9,7 @@ from theatre.serializers import (
     PlayDetailSerializer,
     PerformanceDetailSerializer,
     PerformanceSerializer,
+    TheatreHallSerializer,
 )
 
 
@@ -21,6 +22,11 @@ class ActorApiViewSet(viewsets.ModelViewSet):
 class GenreApiViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+
+
+class TheatreHallApiViewSet(viewsets.ModelViewSet):
+    queryset = TheatreHall.objects.all()
+    serializer_class = TheatreHallSerializer
 
 
 class PlayApiViewSet(viewsets.ModelViewSet):

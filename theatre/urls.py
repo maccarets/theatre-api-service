@@ -6,13 +6,15 @@ from theatre.views import (
     GenreApiViewSet,
     PlayApiViewSet,
     PerformanceApiViewSet,
+    TheatreHallApiViewSet,
 )
 
 router = DefaultRouter()
 router.register("actors", ActorApiViewSet)
 router.register("genres", GenreApiViewSet)
 router.register("plays", PlayApiViewSet)
-router.register("performance", PerformanceApiViewSet)
+router.register("performances", PerformanceApiViewSet)
+router.register("theatre_halls", TheatreHallApiViewSet)
 
 
 urlpatterns = [path("", include(router.urls))]
