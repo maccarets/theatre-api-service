@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework"
+    "rest_framework",
     "user",
     "theatre"
 ]
@@ -51,6 +51,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "theatre_api_service.urls"
+
+AUTH_USER_MODEL = "user.User"
 
 TEMPLATES = [
     {
