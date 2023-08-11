@@ -7,11 +7,11 @@ from theatre.serializers import (
     GenreSerializer,
     PlaySerializer,
     PlayDetailSerializer,
-    PerformanceDetailSerializer,
     PerformanceSerializer,
     TheatreHallSerializer,
     ReservationSerializer,
     ReservationListSerializer,
+    PerformanceListSerializer,
 )
 
 
@@ -44,8 +44,8 @@ class PerformanceApiViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.all()
 
     def get_serializer_class(self):
-        if self.action == "retrieve":
-            return PerformanceDetailSerializer
+        if self.action in ("retrieve", "list"):
+            return PerformanceListSerializer
         return PerformanceSerializer
 
 
@@ -57,9 +57,12 @@ class ReservationApiViewSet(
     queryset = Reservation.objects.all()
 
     def get_serializer_class(self):
-        if self.action == "list":
-            return ReservationListSerializer
+        # if self.action == "list":
+        #     return ReservationListSerializer
         return ReservationSerializer
 
     def get_queryset(self):
         return Reservation.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
