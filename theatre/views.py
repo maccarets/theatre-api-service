@@ -44,8 +44,6 @@ class TheatreHallApiViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
 
 
-
-
 class PlayApiViewSet(viewsets.ModelViewSet):
     queryset = Play.objects.all()
     pagination_class = StandardResultsSetPagination
@@ -55,6 +53,11 @@ class PlayApiViewSet(viewsets.ModelViewSet):
         if self.action in ("retrieve", "list"):
             return PlayDetailSerializer
         return PlaySerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        queryset = queryset.prefetch_related("genres", "actors")
+        return queryset
 
 
 class PerformanceApiViewSet(viewsets.ModelViewSet):
@@ -81,7 +84,18 @@ class ReservationApiViewSet(
         return ReservationSerializer
 
     def get_queryset(self):
-        return Reservation.objects.filter(user=self.request.user)
+        queryset = Reservation.objects.filter(user=self.request.user).prefetch_related(
+            "tickets",
+            "tickets__performance__play",
+            "tickets__performance__theatre_hall",
+        )
+
+        # if self.action == "list":
+        #     queryset.prefetch_related(
+        #         "tickets__performance__play", "tickets__performance__theatre_hall"
+        #     )
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
