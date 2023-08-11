@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets, mixins
+from rest_framework.pagination import PageNumberPagination
 
 from theatre.models import Actor, Genre, Play, Performance, TheatreHall, Reservation
 from theatre.serializers import (
@@ -15,15 +16,22 @@ from theatre.serializers import (
 )
 
 
-# Create your views here.
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 20
+
+
 class ActorApiViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+    pagination_class = StandardResultsSetPagination
 
 
 class GenreApiViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    pagination_class = StandardResultsSetPagination
 
 
 class TheatreHallApiViewSet(viewsets.ModelViewSet):
@@ -31,8 +39,10 @@ class TheatreHallApiViewSet(viewsets.ModelViewSet):
     serializer_class = TheatreHallSerializer
 
 
+
 class PlayApiViewSet(viewsets.ModelViewSet):
     queryset = Play.objects.all()
+    pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
         if self.action in ("retrieve", "list"):
@@ -42,6 +52,7 @@ class PlayApiViewSet(viewsets.ModelViewSet):
 
 class PerformanceApiViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.all()
+    pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
         if self.action in ("retrieve", "list"):
@@ -50,11 +61,10 @@ class PerformanceApiViewSet(viewsets.ModelViewSet):
 
 
 class ReservationApiViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
 ):
     queryset = Reservation.objects.all()
+    pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
         if self.action == "list":
