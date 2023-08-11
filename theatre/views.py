@@ -57,8 +57,8 @@ class ReservationApiViewSet(
     queryset = Reservation.objects.all()
 
     def get_serializer_class(self):
-        # if self.action == "list":
-        #     return ReservationListSerializer
+        if self.action == "list":
+            return ReservationListSerializer
         return ReservationSerializer
 
     def get_queryset(self):
