@@ -5,7 +5,7 @@ from .models import Actor, Genre, Play, Reservation, TheatreHall, Performance, T
 class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
-        fields = "__all__"
+        fields = ("id", "first_name", "last_name", "full_name")
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class TheatreHallSerializer(serializers.ModelSerializer):
 class PlaySerializer(serializers.ModelSerializer):
     class Meta:
         model = Play
-        fields = "__all__"
+        fields = ("id", "title", "description", "genres", "actors")
 
 
 class PlayDetailSerializer(PlaySerializer):
@@ -49,6 +49,13 @@ class PerformanceForTicketSerializer(PerformanceSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ticket
+        fields = ("row", "seat", "performance")
+
+
+class TicketListSerializer(serializers.ModelSerializer):
     performance = PerformanceDetailSerializer()
 
     class Meta:
@@ -58,6 +65,13 @@ class TicketSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(serializers.ModelSerializer):
     tickets = TicketSerializer(read_only=False, many=True)
+
+    class Meta:
+        model = Reservation
+        fields = ("id", "created_at", "tickets")
+
+class ReservationListSerializer(serializers.ModelSerializer):
+    tickets = TicketListSerializer(read_only=False, many=True)
 
     class Meta:
         model = Reservation
