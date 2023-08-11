@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, mixins
 
-from theatre.models import Actor, Genre, Play, Performance, TheatreHall
+from theatre.models import Actor, Genre, Play, Performance, TheatreHall, Reservation
 from theatre.serializers import (
     ActorSerializer,
     GenreSerializer,
@@ -10,6 +10,7 @@ from theatre.serializers import (
     PerformanceDetailSerializer,
     PerformanceSerializer,
     TheatreHallSerializer,
+    ReservationSerializer,
 )
 
 
@@ -45,3 +46,19 @@ class PerformanceApiViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return PerformanceDetailSerializer
         return PerformanceSerializer
+
+
+class ReservationApiViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
+    queryset = Reservation.objects.all()
+
+    def get_serializer_class(self):
+        # if self.action == "retrieve":
+        #     return PerformanceDetailSerializer
+        return ReservationSerializer
+
+    def get_queryset(self):
+        return Reservation.objects.filter(user=self.request.user)

@@ -27,11 +27,6 @@ class Play(models.Model):
         return self.title
 
 
-class Reservation(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
 class TheatreHall(models.Model):
     name = models.CharField(max_length=100)
     rows = models.PositiveIntegerField()
@@ -51,8 +46,17 @@ class Performance(models.Model):
     show_time = models.DateTimeField()
 
 
+class Reservation(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
 class Ticket(models.Model):
     row = models.PositiveIntegerField()
     seat = models.PositiveIntegerField()
-    performance = models.ForeignKey(Performance, on_delete=models.CASCADE)
-    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    performance = models.ForeignKey(
+        Performance, on_delete=models.CASCADE, related_name="tickets"
+    )
+    reservation = models.ForeignKey(
+        Reservation, on_delete=models.CASCADE, related_name="tickets"
+    )

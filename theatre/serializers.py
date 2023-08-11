@@ -14,6 +14,12 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class TheatreHallSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TheatreHall
+        fields = "__all__"
+
+
 class PlaySerializer(serializers.ModelSerializer):
     class Meta:
         model = Play
@@ -23,18 +29,6 @@ class PlaySerializer(serializers.ModelSerializer):
 class PlayDetailSerializer(PlaySerializer):
     genres = GenreSerializer(many=True)
     actors = ActorSerializer(many=True)
-
-
-class ReservationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Reservation
-        fields = "__all__"
-
-
-class TheatreHallSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TheatreHall
-        fields = "__all__"
 
 
 class PerformanceSerializer(serializers.ModelSerializer):
@@ -48,7 +42,23 @@ class PerformanceDetailSerializer(PerformanceSerializer):
     theatre_hall = TheatreHallSerializer()
 
 
+class PerformanceForTicketSerializer(PerformanceSerializer):
+    class Meta:
+        model = Performance
+        fields = "__all__"
+
+
 class TicketSerializer(serializers.ModelSerializer):
+    performance = PerformanceDetailSerializer()
+
     class Meta:
         model = Ticket
-        fields = "__all__"
+        fields = ("row", "seat", "performance")
+
+
+class ReservationSerializer(serializers.ModelSerializer):
+    tickets = TicketSerializer(read_only=False, many=True)
+
+    class Meta:
+        model = Reservation
+        fields = ("id", "created_at", "tickets")
