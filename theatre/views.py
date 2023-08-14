@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -88,6 +90,31 @@ class PerformanceApiViewSet(viewsets.ModelViewSet):
             return PerformanceListSerializer
         return PerformanceSerializer
 
+    def get_queryset(self):
+        queryset = self.queryset
+
+        if self.action in ("retrieve", "list"):
+            queryset = queryset.select_related("play", "theatre_hall")
+
+        date = self.request.query_params.get("date")
+        if date:
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+            queryset = queryset.filter(show_time__date=date)
+        return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "date",
+                type=OpenApiTypes.DATE,
+                description=(
+                    "Filter by datetime of Performance (ex. ?date=2022-10-23)"
+                ),
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class ReservationApiViewSet(
