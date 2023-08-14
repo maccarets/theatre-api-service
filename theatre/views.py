@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import generics, viewsets, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -57,7 +59,23 @@ class PlayApiViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
         queryset = queryset.prefetch_related("genres", "actors")
+        title = self.request.query_params.get("title")
+
+        if title:
+            queryset = queryset.filter(title__icontains=title)
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "title",
+                type=OpenApiTypes.INT,
+                description="Filter by title id (ex. ?title=2)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class PerformanceApiViewSet(viewsets.ModelViewSet):
@@ -69,6 +87,7 @@ class PerformanceApiViewSet(viewsets.ModelViewSet):
         if self.action in ("retrieve", "list"):
             return PerformanceListSerializer
         return PerformanceSerializer
+
 
 
 class ReservationApiViewSet(
