@@ -136,10 +136,6 @@ class ReservationApiViewSet(
             "tickets__performance__theatre_hall",
         )
 
-        # if self.action == "list":
-        #     queryset.prefetch_related(
-        #         "tickets__performance__play", "tickets__performance__theatre_hall"
-        #     )
 
         return queryset
 
