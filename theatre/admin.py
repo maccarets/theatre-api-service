@@ -10,7 +10,7 @@ from theatre.models import (
     Reservation,
 )
 
-# Register your models here.
+
 admin.site.register(Actor)
 admin.site.register(Genre)
 admin.site.register(Play)
